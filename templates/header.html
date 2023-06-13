@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Планування подорожей</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>  
+    <header>
+        <h1>Планування подорожей</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Головна</a></li>
+                <li><a href="{{ url_for('hotels') }}">Готелі</a></li>
+
+                {% if 'username' in session %}
+                    <li><a href="{{ url_for('profile') }}">Профіль</a></li>
+                        <li><a href="{{ url_for('logout') }}">Вийти</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Увійти</a></li>
+                    <li><a href="{{ url_for('register') }}">Зареєструватися</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+</body>
+</html>

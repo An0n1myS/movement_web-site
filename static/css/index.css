@@ -1,0 +1,85 @@
+.hotel-list {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #888888 #f2f2f2;
+    margin-bottom: 5px;
+    margin-top: 20px; /* Отступ сверху */
+    padding-bottom: 10px; /* Отступ снизу */
+}
+
+.hotel-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.hotel-list::-webkit-scrollbar-track {
+    background: #f2f2f2;
+}
+
+.hotel-list::-webkit-scrollbar-thumb {
+    background-color: #888888;
+    border-radius: 4px;
+}
+
+.hotel-card {
+    flex: 0 0 500px;
+    height:325px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.hotel-card img {
+    width: 80%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.hotel-card h2 {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.hotel-card p {
+    margin: 0;
+}
+
+
+/* Дополнительные стили для главной страницы */
+main {
+    text-align: center;
+    width: 80%;
+    margin-top: 50px;
+    margin: 50px auto 50px;
+}
+
+main h3 {
+    font-size: 34px;
+    margin-bottom: 20px;
+}
+
+main p {
+    font-size: 24px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+main .hotel-list {
+    margin-top: 30px;
+}
+
+main .hotel-card button {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+main .hotel-card button:hover {
+    background-color: #45a049;
+}

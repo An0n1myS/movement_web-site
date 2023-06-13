@@ -1,0 +1,264 @@
+<html>
+<head>
+<title>main.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+.s4 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">secrets</span>
+<span class="s0">import </span><span class="s1">base64</span>
+
+<span class="s0">from </span><span class="s1">flask </span><span class="s0">import </span><span class="s1">Flask</span><span class="s0">, </span><span class="s1">render_template</span><span class="s0">, </span><span class="s1">request</span><span class="s0">, </span><span class="s1">redirect</span><span class="s0">, </span><span class="s1">url_for</span><span class="s0">, </span><span class="s1">session</span>
+<span class="s0">import </span><span class="s1">pymysql</span>
+
+<span class="s1">app = Flask(__name__</span><span class="s0">, </span><span class="s1">template_folder=</span><span class="s2">&quot;./&quot;</span><span class="s1">)</span>
+
+<span class="s1">app.secret_key = secrets.token_hex(</span><span class="s3">16</span><span class="s1">)</span>
+
+<span class="s4"># Конфігурація бази даних</span>
+<span class="s1">db = pymysql.connect(host=</span><span class="s2">'localhost'</span><span class="s0">, </span><span class="s1">user=</span><span class="s2">'root'</span><span class="s0">, </span><span class="s1">password=</span><span class="s2">''</span><span class="s0">, </span><span class="s1">db=</span><span class="s2">'hotel_booking'</span><span class="s0">, </span><span class="s1">charset=</span><span class="s2">'utf8mb4'</span><span class="s1">)</span>
+<span class="s1">cursor = db.cursor()</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/'</span><span class="s1">)</span>
+<span class="s0">def </span><span class="s1">demo():</span>
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'index.html'</span><span class="s1">)</span>
+
+<span class="s1">@app.route(</span><span class="s2">'/'</span><span class="s1">)</span>
+<span class="s0">def </span><span class="s1">index():</span>
+    <span class="s4"># Отримання списку готелів з бази даних</span>
+    <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM hotels&quot;</span><span class="s1">)</span>
+    <span class="s1">hotels = cursor.fetchall()</span>
+
+    <span class="s1">encoded_hotels = []</span>
+    <span class="s0">for </span><span class="s1">hotel </span><span class="s0">in </span><span class="s1">hotels:</span>
+        <span class="s1">photo_data = base64.b64encode(hotel[</span><span class="s3">5</span><span class="s1">]).decode(</span><span class="s2">'utf-8'</span><span class="s1">)</span>
+        <span class="s1">encoded_hotels.append((hotel[</span><span class="s3">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">hotel[</span><span class="s3">1</span><span class="s1">]</span><span class="s0">, </span><span class="s1">hotel[</span><span class="s3">2</span><span class="s1">]</span><span class="s0">, </span><span class="s1">hotel[</span><span class="s3">3</span><span class="s1">]</span><span class="s0">, </span><span class="s1">hotel[</span><span class="s3">4</span><span class="s1">]</span><span class="s0">, </span><span class="s1">photo_data))</span>
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'index.html'</span><span class="s0">, </span><span class="s1">hotels=encoded_hotels)</span>
+
+
+<span class="s4"># Додавання нового готелю</span>
+<span class="s1">@app.route(</span><span class="s2">'/add_hotel'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">add_hotel():</span>
+    <span class="s1">name = request.form[</span><span class="s2">'name'</span><span class="s1">]</span>
+    <span class="s1">description = request.form[</span><span class="s2">'description'</span><span class="s1">]</span>
+    <span class="s1">location = request.form[</span><span class="s2">'location'</span><span class="s1">]</span>
+    <span class="s1">rating = request.form[</span><span class="s2">'rating'</span><span class="s1">]</span>
+    <span class="s1">photo = request.form[</span><span class="s2">'photo'</span><span class="s1">]</span>
+
+    <span class="s4"># Додавання нового готелю до бази даних</span>
+    <span class="s1">cursor.execute(</span><span class="s2">&quot;INSERT INTO hotels (name, description, location, rating, photo) VALUES (%s, %s, %s, %s, %s)&quot;</span><span class="s0">,</span>
+                   <span class="s1">(name</span><span class="s0">, </span><span class="s1">description</span><span class="s0">, </span><span class="s1">location</span><span class="s0">, </span><span class="s1">rating</span><span class="s0">, </span><span class="s1">photo))</span>
+    <span class="s1">db.commit()</span>
+
+    <span class="s0">return </span><span class="s1">redirect(url_for(</span><span class="s2">'index'</span><span class="s1">))</span>
+
+
+<span class="s4"># Сторінка з усіма готелями</span>
+<span class="s1">@app.route(</span><span class="s2">'/hotels'</span><span class="s1">)</span>
+<span class="s0">def </span><span class="s1">hotels():</span>
+    <span class="s4"># Отримання списку готелів з бази даних</span>
+    <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM hotels&quot;</span><span class="s1">)</span>
+    <span class="s1">hotels = cursor.fetchall()</span>
+
+    <span class="s1">encoded_hotels = []</span>
+    <span class="s0">for </span><span class="s1">hotel </span><span class="s0">in </span><span class="s1">hotels:</span>
+        <span class="s1">photo_data = base64.b64encode(hotel[</span><span class="s3">5</span><span class="s1">]).decode(</span><span class="s2">'utf-8'</span><span class="s1">)</span>
+        <span class="s1">encoded_hotels.append((hotel[</span><span class="s3">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">hotel[</span><span class="s3">1</span><span class="s1">]</span><span class="s0">, </span><span class="s1">hotel[</span><span class="s3">2</span><span class="s1">]</span><span class="s0">, </span><span class="s1">hotel[</span><span class="s3">3</span><span class="s1">]</span><span class="s0">, </span><span class="s1">hotel[</span><span class="s3">4</span><span class="s1">]</span><span class="s0">, </span><span class="s1">photo_data))</span>
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'hotels.html'</span><span class="s0">, </span><span class="s1">hotels=encoded_hotels)</span>
+
+
+<span class="s4"># Сторінка з деталями готелю</span>
+<span class="s1">@app.route(</span><span class="s2">'/hotel/&lt;int:hotel_id&gt;'</span><span class="s1">)</span>
+<span class="s0">def </span><span class="s1">hotel(hotel_id):</span>
+    <span class="s4"># Отримання інформації про готель з бази даних</span>
+    <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM hotels WHERE id_hotel = %s&quot;</span><span class="s0">, </span><span class="s1">(hotel_id</span><span class="s0">,</span><span class="s1">))</span>
+    <span class="s1">hotel = cursor.fetchone()</span>
+
+    <span class="s4"># Отримання інформації про кімнати готелю з бази даних</span>
+    <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM rooms WHERE id_hotel = %s&quot;</span><span class="s0">, </span><span class="s1">(hotel_id</span><span class="s0">,</span><span class="s1">))</span>
+    <span class="s1">rooms = cursor.fetchall()</span>
+
+    <span class="s1">encoded_hotels =[]</span>
+    <span class="s1">photo_data = base64.b64encode(hotel[</span><span class="s3">5</span><span class="s1">]).decode(</span><span class="s2">'utf-8'</span><span class="s1">)</span>
+    <span class="s1">encoded_hotels.append(hotel[</span><span class="s3">0</span><span class="s1">])</span>
+    <span class="s1">encoded_hotels.append(hotel[</span><span class="s3">1</span><span class="s1">])</span>
+    <span class="s1">encoded_hotels.append(hotel[</span><span class="s3">2</span><span class="s1">])</span>
+    <span class="s1">encoded_hotels.append(hotel[</span><span class="s3">3</span><span class="s1">])</span>
+    <span class="s1">encoded_hotels.append(hotel[</span><span class="s3">4</span><span class="s1">])</span>
+    <span class="s1">encoded_hotels.append(photo_data)</span>
+    <span class="s4"># Створення словника для збереження фотографій кімнат</span>
+    <span class="s1">room_photos = {}</span>
+
+    <span class="s0">for </span><span class="s1">room </span><span class="s0">in </span><span class="s1">rooms:</span>
+        <span class="s1">room_id = room[</span><span class="s3">0</span><span class="s1">]</span>
+        <span class="s4"># Отримання фотографій кімнати з бази даних</span>
+        <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM room_photos WHERE id_room = %s&quot;</span><span class="s0">, </span><span class="s1">(room_id</span><span class="s0">,</span><span class="s1">))</span>
+        <span class="s1">photos = cursor.fetchall()</span>
+
+        <span class="s4"># Перекодування фотографій у base64</span>
+        <span class="s1">encoded_photos = []</span>
+        <span class="s0">for </span><span class="s1">photo </span><span class="s0">in </span><span class="s1">photos:</span>
+            <span class="s1">encoded_photo = base64.b64encode(photo[</span><span class="s3">2</span><span class="s1">]).decode(</span><span class="s2">'utf-8'</span><span class="s1">)</span>
+            <span class="s1">encoded_photos.append(encoded_photo)</span>
+
+        <span class="s1">room_photos[room_id] = encoded_photos</span>
+
+    <span class="s4"># Отримання відгуків про готель з бази даних</span>
+    <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM reviews WHERE id_hotel = %s&quot;</span><span class="s0">, </span><span class="s1">(hotel_id</span><span class="s0">,</span><span class="s1">))</span>
+    <span class="s1">reviews = cursor.fetchall()</span>
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'hotel-details.html'</span><span class="s0">, </span><span class="s1">hotel=encoded_hotels</span><span class="s0">, </span><span class="s1">rooms=rooms</span><span class="s0">, </span><span class="s1">room_photos=room_photos</span><span class="s0">, </span><span class="s1">reviews=reviews)</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/booking'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">handle_booking():</span>
+    <span class="s4"># Получение данных из формы бронирования</span>
+    <span class="s1">check_in = request.form[</span><span class="s2">'check-in'</span><span class="s1">]</span>
+    <span class="s1">check_out = request.form[</span><span class="s2">'check-out'</span><span class="s1">]</span>
+
+    <span class="s4"># Получение данных о пользователе из сессии</span>
+    <span class="s1">user_id = session[</span><span class="s2">'username'</span><span class="s1">]</span>
+
+    <span class="s4"># Получение данных о комнате из формы</span>
+    <span class="s1">room_id = request.form[</span><span class="s2">'room-id'</span><span class="s1">]</span>
+
+    <span class="s4"># SQL-запрос для вставки данных в таблицу booking</span>
+    <span class="s1">insert_query = </span><span class="s2">&quot;INSERT INTO bookings (id_user, id_room, check_in_date, check_out_date) VALUES (%s, %s, %s, %s)&quot;</span>
+    <span class="s1">values = (user_id</span><span class="s0">, </span><span class="s1">room_id</span><span class="s0">, </span><span class="s1">check_in</span><span class="s0">, </span><span class="s1">check_out)</span>
+    <span class="s1">cursor.execute(insert_query</span><span class="s0">, </span><span class="s1">values)</span>
+    <span class="s1">db.commit()</span>
+
+    <span class="s0">return </span><span class="s1">redirect(url_for(</span><span class="s2">'index'</span><span class="s1">))</span>
+
+<span class="s4"># Обробка відправлення відгуку</span>
+<span class="s1">@app.route(</span><span class="s2">'/submit-review'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">submit_review():</span>
+    <span class="s4"># Отримання даних з форми</span>
+    <span class="s1">rating = request.form.get(</span><span class="s2">'rating'</span><span class="s1">)</span>
+    <span class="s1">comment = request.form.get(</span><span class="s2">'comment'</span><span class="s1">)</span>
+
+    <span class="s4"># Перевірка чи заповнені обов'язкові поля</span>
+    <span class="s0">if </span><span class="s1">rating </span><span class="s0">is None or </span><span class="s1">comment </span><span class="s0">is None</span><span class="s1">:</span>
+        <span class="s0">return </span><span class="s2">'Будь ласка, заповніть усі поля форми.'</span>
+
+    <span class="s4"># Отримання ідентифікаторів користувача і готелю (якщо потрібно)</span>
+    <span class="s1">hotel_id = request.form.get(</span><span class="s2">'hotel_id'</span><span class="s1">)  </span><span class="s4"># Встановіть ідентифікатор користувача, якщо використовується авторизація</span>
+    <span class="s1">user_id = session[</span><span class="s2">'username'</span><span class="s1">]  </span><span class="s4"># Встановіть ідентифікатор готелю, якщо використовується відповідний готель</span>
+
+    <span class="s4"># Збереження відгуку в базі даних</span>
+    <span class="s1">cursor.execute(</span><span class="s2">&quot;INSERT INTO reviews (id_user, id_hotel, rating, comment) VALUES (%s, %s, %s, %s)&quot;</span><span class="s0">,</span>
+                   <span class="s1">(user_id</span><span class="s0">, </span><span class="s1">hotel_id</span><span class="s0">, </span><span class="s1">rating</span><span class="s0">, </span><span class="s1">comment))</span>
+    <span class="s1">db.commit()</span>
+
+    <span class="s4"># Повернення перенаправлення на ту саму сторінку</span>
+    <span class="s0">return </span><span class="s1">redirect(url_for(</span><span class="s2">'hotel'</span><span class="s0">, </span><span class="s1">hotel_id=hotel_id))</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/profile'</span><span class="s1">)</span>
+<span class="s0">def </span><span class="s1">profile():</span>
+     <span class="s0">if </span><span class="s2">'username' </span><span class="s0">not in </span><span class="s1">session:</span>
+         <span class="s0">return </span><span class="s1">redirect(url_for(</span><span class="s2">'login'</span><span class="s1">))</span>
+     <span class="s0">else</span><span class="s1">:</span>
+        <span class="s4"># Отримання даних користувача з бази даних</span>
+        <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM users WHERE id_user = %s&quot;</span><span class="s0">, </span><span class="s1">(session[</span><span class="s2">'username'</span><span class="s1">]</span><span class="s0">,</span><span class="s1">))</span>
+        <span class="s1">user = cursor.fetchone()</span>
+
+        <span class="s4"># Отримання даних про бронювання користувача з бази даних</span>
+        <span class="s1">cursor.execute(</span><span class="s2">&quot;&quot;&quot; 
+            SELECT bookings.id_booking, hotels.name, rooms.type, rooms.price, bookings.check_in_date, bookings.check_out_date 
+            FROM bookings 
+            INNER JOIN users ON bookings.id_user = users.id_user 
+            INNER JOIN rooms ON bookings.id_room = rooms.id_room 
+            INNER JOIN hotels ON rooms.id_hotel = hotels.id_hotel 
+            WHERE users.id_user = %s 
+        &quot;&quot;&quot;</span><span class="s0">, </span><span class="s1">(session[</span><span class="s2">'username'</span><span class="s1">]</span><span class="s0">,</span><span class="s1">))</span>
+        <span class="s1">bookings = cursor.fetchall()</span>
+
+        <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'profile.html'</span><span class="s0">, </span><span class="s1">user=user</span><span class="s0">, </span><span class="s1">bookings=bookings)</span>
+
+
+
+<span class="s4"># Сторінка авторизації</span>
+<span class="s1">@app.route(</span><span class="s2">'/login'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'GET'</span><span class="s0">, </span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">login():</span>
+    <span class="s0">if </span><span class="s1">request.method == </span><span class="s2">'POST'</span><span class="s1">:</span>
+        <span class="s1">email = request.form[</span><span class="s2">'email'</span><span class="s1">]</span>
+        <span class="s1">password = request.form[</span><span class="s2">'password'</span><span class="s1">]</span>
+
+        <span class="s4"># Перевірка введених даних з базою даних</span>
+        <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM users WHERE email = %s AND password = %s&quot;</span><span class="s0">, </span><span class="s1">(email</span><span class="s0">, </span><span class="s1">password))</span>
+        <span class="s1">user = cursor.fetchone()</span>
+
+        <span class="s0">if </span><span class="s1">user:</span>
+            <span class="s4"># Авторизація успішна, збереження ідентифікатора користувача у сесії</span>
+            <span class="s1">session[</span><span class="s2">'username'</span><span class="s1">] = user[</span><span class="s3">0</span><span class="s1">]</span>
+            <span class="s0">return </span><span class="s1">redirect(url_for(</span><span class="s2">'index'</span><span class="s1">))</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s4"># Авторизація невдала, повідомлення про помилку</span>
+            <span class="s1">error = </span><span class="s2">'Невірний електронний лист або пароль.'</span>
+            <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'templates/login.html'</span><span class="s0">, </span><span class="s1">error=error)</span>
+    <span class="s0">else</span><span class="s1">:</span>
+        <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'templates/login_form.html'</span><span class="s1">)</span>
+
+
+<span class="s4"># Сторінка реєстрації</span>
+<span class="s1">@app.route(</span><span class="s2">'/register'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'GET'</span><span class="s0">, </span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">register():</span>
+    <span class="s0">if </span><span class="s1">request.method == </span><span class="s2">'POST'</span><span class="s1">:</span>
+        <span class="s1">name = request.form[</span><span class="s2">'name'</span><span class="s1">]</span>
+        <span class="s1">email = request.form[</span><span class="s2">'email'</span><span class="s1">]</span>
+        <span class="s1">password = request.form[</span><span class="s2">'password'</span><span class="s1">]</span>
+        <span class="s1">country = request.form[</span><span class="s2">'country'</span><span class="s1">]</span>
+        <span class="s1">language = request.form[</span><span class="s2">'language'</span><span class="s1">]</span>
+
+        <span class="s4"># Перевірка, чи користувач з вказаним електронним листом вже існує</span>
+        <span class="s1">cursor.execute(</span><span class="s2">&quot;SELECT * FROM users WHERE email = %s&quot;</span><span class="s0">, </span><span class="s1">email)</span>
+        <span class="s1">existing_user = cursor.fetchone()</span>
+
+        <span class="s0">if </span><span class="s1">existing_user:</span>
+            <span class="s4"># Користувач вже існує, повідомлення про помилку</span>
+            <span class="s1">error = </span><span class="s2">'Користувач з таким електронним листом уже існує.'</span>
+            <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'templates/register_form.html'</span><span class="s0">, </span><span class="s1">error=error)</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s4"># Додавання нового користувача до бази даних</span>
+            <span class="s1">cursor.execute(</span><span class="s2">&quot;INSERT INTO users (name, email, password, country, language) VALUES (%s, %s, %s, %s, %s)&quot;</span><span class="s0">,</span>
+                           <span class="s1">(name</span><span class="s0">, </span><span class="s1">email</span><span class="s0">, </span><span class="s1">password</span><span class="s0">, </span><span class="s1">country</span><span class="s0">, </span><span class="s1">language))</span>
+            <span class="s1">db.commit()</span>
+
+            <span class="s0">return </span><span class="s1">redirect(url_for(</span><span class="s2">'login'</span><span class="s1">))</span>
+    <span class="s0">else</span><span class="s1">:</span>
+        <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'templates/register_form.html'</span><span class="s1">)</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/logout'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'GET'</span><span class="s0">, </span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">logout():</span>
+    <span class="s0">if </span><span class="s1">request.method == </span><span class="s2">'POST'</span><span class="s1">:</span>
+
+        <span class="s1">session.pop(</span><span class="s2">'username'</span><span class="s0">, None</span><span class="s1">)</span>
+        <span class="s1">session.pop(</span><span class="s2">'user_id'</span><span class="s0">, None</span><span class="s1">)</span>
+
+        <span class="s0">return </span><span class="s1">redirect(</span><span class="s2">'/'</span><span class="s1">)</span>
+    <span class="s0">else</span><span class="s1">:</span>
+        <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'error.html'</span><span class="s1">)</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s2">'__main__'</span><span class="s1">:</span>
+    <span class="s1">app.run(debug=</span><span class="s0">True</span><span class="s1">)</span>
+</pre>
+</body>
+</html>

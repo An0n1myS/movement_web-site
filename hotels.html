@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список готелів</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/hotel.css') }}">
+</head>
+<body>
+    {% include 'templates/header.html' %}
+    <h1>Список готелів</h1>
+
+    <div class="hotel-list">
+        {% for hotel in hotels %}
+            <div class="hotel-card">
+                <a href="/hotel/{{ hotel[0] }}"> <!-- Ссылка на страницу с подробностями отеля -->
+                    <img src="data:image/jpeg;base64,{{ hotel[5] }}" alt="{{ hotel[1] }}">
+                </a>
+                <p>
+                    <h2>{{ hotel[1] }}</h2>
+                    <span>{{ hotel[3] }}</span>,
+                    <span>
+                        {% set star_rating = hotel[4] | int %}
+                        {% for _ in range(star_rating) %}
+                            &#9733;
+                        {% endfor %}
+                    </span>
+                    <a href="/hotel/{{ hotel[0] }}" class="btn">Детальніше</a>
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+
+{% include 'templates/footer.html' %}
+</body>
+</html>

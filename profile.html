@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Профіль користувача</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+{% include 'templates/header.html' %}
+
+<body>
+    <div class="profile-info">
+        <h1>Профіль користувача</h1>
+        <p><strong>Ім'я:</strong> {{ user[1] }}</p>
+        <p><strong>Email:</strong> {{ user[2] }}</p>
+        <p><strong>Країна:</strong> {{ user[4] }}</p>
+        <p><strong>Мова:</strong> {{ user[5] }}</p>
+    </div>
+    <br>
+    <br>
+    <div class="info-about-booking">
+        <h2>Бронювання користувача:</h2>
+        <table>
+            <tr>
+                <th>Готель</th>
+                <th>Кімната</th>
+                <th>Ціна</th>
+                <th>Дата заїзду</th>
+                <th>Дата виїзду</th>
+            </tr>
+            {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking[1] }}</td>
+                    <td>{{ booking[2] }}</td>
+                    <td>{{ booking[3] }}</td>
+                    <td>{{ booking[4] }}</td>
+                    <td>{{ booking[5] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+</body>
+
+{% include 'templates/footer.html' %}
+</html>

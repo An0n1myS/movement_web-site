@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Готель</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/hotel-details.css') }}">
+</head>
+<body>
+{% include 'templates/header.html' %}
+
+    <main>
+
+        <div class="header-nav">
+            <nav>
+                <ul>
+                    <li><a href="#info">Інформація</a></li>
+                    <li><a href="#booking">Бронювання</a></li>
+                    <li><a href="#reviews">Відгуки</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="container">
+            <h1 style="text-align: center;margin:20px">Інформація про готель</h1>
+            <section id="info">
+                <img src="data:image/jpeg;base64,{{ hotel[5] }}" alt="{{ hotel[1] }}">
+                <div class="info">
+                    <!-- Відображення інформації про готель -->
+                    <h1>{{ hotel[1] }}</h1>
+                    <br>
+                    <p>Розташування: {{ hotel[3] }}</p>
+                    <p>Рейтинг: {{ hotel[4] }}</p>
+                    <br>
+                    <p>{{ hotel[2] }}</p>
+                </div>
+            </section>
+            <section id="rooms">
+                <h1 style="text-align: center;margin:20px;">Наші кімнати</h1>
+                {% for room in rooms %}
+
+                <div class="room-conteiner">
+                    <h2>Номер {{ room[0]+100 }}</h2>
+                    <br>
+                    <div class="room">
+                        <div class="room-info">
+                            <p>Тип: {{ room[2] }}</p>
+                            <p>Ціна: {{ room[3] }} грн/день</p>
+                            {% if room[4] == 1 %}
+                            <p>Доступність: Вільна</p>
+                            {% else %}
+                            <p>Доступність: Зайнята</p>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                    <div class="photos">
+                        {% for photo in room_photos[room[0]] %}
+                        <img src="data:image/jpeg;base64,{{ photo }}" alt="Фотографія кімнати">
+                        {% endfor %}
+                    </div>
+
+
+
+                    <section id="booking">
+                        <h1>Бронювання кімнати</h1>
+                        <!-- Форма для бронювання кімнати -->
+                        <form action="/booking" method="post">
+                            <label for="check-in">Дата початку бронювання:</label>
+                            <input type="date" id="check-in" name="check-in" required>
+                            <label for="check-out">Дата кінця бронювання:</label>
+                            <input type="date" id="check-out" name="check-out" required>
+                            <input type="hidden" name="room-id" value="{{ room[0] }}">
+                            <input type="submit" class="btn"  value="Забронювати">
+                        </form>
+
+                    </section>
+                </div>
+                <hr>
+                <br>
+                {% endfor %}
+                <br>
+            <!-- Додаткові кімнати -->
+            </section>
+        </div>
+
+            <section id="reviews">
+                        <h1>Відгуки</h1>
+                        <!-- Відображення відгуків -->
+                        <ul>
+                            {% for review in reviews %}
+                            <li>
+                                <h3>Оцінка: {{ review[3] }}</h3>
+                                <p>{{ review[4] }}</p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% if 'username' in session %}
+                            <div class="review_form_conteiner">
+                                <h2 style="text-align: center; margin: 10px 0;">Написати відгук</h2>
+                                <form action="/submit-review" method="post">
+                                    <input type="hidden" id="hotel_id" name="hotel_id" value="{{hotel[0]}}">
+                                    <label for="rating">Рейтинг:</label>
+                                    <select id="rating" name="rating" required>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                    <label for="comment">Коментар:</label>
+                                    <textarea id="comment" name="comment" required></textarea>
+                                    <input type="submit" value="Надіслати відгук">
+                                </form>
+                            </div>
+                        {% else %}
+                            <h2 style="text-align: center; margin-bottom: 50px">Щоб залишити відгук потрібно авторизуватись</h2>
+                        {% endif %}
+
+                    </section>
+
+    </main>
+
+
+{% include 'templates/footer.html' %}
+
+</body>
+</html>

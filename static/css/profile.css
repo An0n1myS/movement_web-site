@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+body h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+body p {
+    margin-bottom: 10px;
+}
+
+body strong {
+    font-weight: bold;
+}
+
+.profile-info{
+    margin: auto;
+    margin-top: 3%;
+    margin-left: 3%;
+    width: 90%;
+}
+.info-about-booking h2 {
+    font-size: 24px;
+    margin-left: 4%;
+    margin-bottom: 15px;
+}
+
+.info-about-booking table {
+    width: 90%;
+    margin: auto;
+    border-collapse: collapse;
+}
+
+.info-about-booking th,
+.info-about-booking td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.info-about-booking th {
+    font-weight: bold;
+}
+
+.info-about-booking tr:nth-child(even) {
+    background-color: #f2f2f2;
+}

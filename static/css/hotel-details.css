@@ -1,0 +1,270 @@
+/* Загальні стилі */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Стилі для навігаційного меню */
+.header-nav ul {
+  background: #ddd;
+  list-style-type: none;
+  margin: 0;
+  padding: 15px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.header-nav li {
+  display: inline;
+}
+
+.header-nav a {
+  text-decoration: none;
+  padding: 10px;
+  color: #333;
+}
+
+/* Стилі для секції "Інформація про готель" */
+#info {
+  display: flex;
+  width: 90%;
+  margin: auto;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+#info h1 {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+#info h2 {
+  font-size: 26px;
+  margin-bottom: 5px;
+}
+.info{
+    max-width: 550px;
+}
+#info p {
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+#info img {
+  width: 50%;
+  max-width: 600px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-left: 20px;
+}
+
+/* Стилі для секції "Наші кімнати" */
+.room-conteiner{
+    margin: 10px 0;
+}
+#rooms {
+  width: 90%;
+  margin: auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+#rooms h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.room {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.room-info {
+  width: 60%;
+}
+
+.room-info h2 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.room-info p {
+  margin-bottom: 5px;
+}
+
+.room-image {
+  width: 35%;
+  display: flex;
+  align-items: center;
+}
+
+.room-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.photos {
+  width: 100%;
+  height: 300px;
+  overflow-x: scroll;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #888888 #f2f2f2;
+}
+
+.photos img {
+  display: inline-block;
+  width: 450px;
+  min-height: 250px;
+  max-height: 250px;
+  margin-right: 10px;
+  border-radius: 10px;
+}
+.photos::-webkit-scrollbar {
+    width: 8px;
+}
+
+.photos::-webkit-scrollbar-track {
+    background: #f2f2f2;
+}
+
+.photos::-webkit-scrollbar-thumb {
+    background-color: #888888;
+    border-radius: 4px;
+}
+
+#booking {
+  margin-top: 20px;
+}
+
+#booking h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+#booking form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+#booking label,
+#booking input[type="date"],
+#booking input[type="submit"] {
+  margin-bottom: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+#reviews {
+  width: 80%;
+  margin: auto;
+  margin-top: 20px;
+}
+
+#reviews h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#reviews ul {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+#reviews li {
+  margin: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+
+#reviews li h3 {
+  margin: 0;
+}
+
+#reviews li p {
+  margin: 10px;
+}
+
+#reviews h2 {
+  margin-top: 20px;
+}
+
+.review_form_conteiner{
+ margin: auto;
+
+}
+#reviews form {
+    margin-left: 15%;
+    margin-bottom: 5%;
+}
+
+#reviews form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#reviews form select{
+display: inline-block;
+}
+#reviews form textarea,
+#reviews form input[type="submit"] {
+  margin-bottom: 10px;
+  width: 80%;
+}
+
+#reviews form textarea {
+  height: 100px;
+}
+
+#reviews form input[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+}
+
+#reviews form input[type="submit"]:hover {
+  background-color: #45a049;
+}
+
