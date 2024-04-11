@@ -21,7 +21,7 @@
 # Инструкции по установке
 - Клонируйте репозиторий с GitHub.
 ```bash Copy code
-git clone <URL репозитория>
+git clone https://github.com/An0n1myS/movement_web-site.git
 ```
 - Установите все зависимости Python.
 ```
