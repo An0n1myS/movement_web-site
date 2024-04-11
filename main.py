@@ -9,7 +9,7 @@ app = Flask(__name__, template_folder="./")
 app.secret_key = secrets.token_hex(16)
 
 # Конфігурація бази даних
-db = pymysql.connect(host='localhost', user='root', password='', db='hotel_booking', charset='utf8mb4')
+db = pymysql.connect(host='localhost', user='root', password='5555', db='hotel_booking', charset='utf8mb4')
 cursor = db.cursor()
 
 
@@ -59,6 +59,7 @@ def hotels():
     encoded_hotels = []
     for hotel in hotels:
         photo_data = base64.b64encode(hotel[5]).decode('utf-8')
+
         encoded_hotels.append((hotel[0], hotel[1], hotel[2], hotel[3], hotel[4], photo_data))
 
     return render_template('hotels.html', hotels=encoded_hotels)
@@ -193,7 +194,7 @@ def login():
         else:
             # Авторизація невдала, повідомлення про помилку
             error = 'Невірний електронний лист або пароль.'
-            return render_template('templates/login.html', error=error)
+            return render_template('templates/login_form.html', error=error)
     else:
         return render_template('templates/login_form.html')
 
